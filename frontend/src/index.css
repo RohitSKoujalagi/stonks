@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink:     #0d0f14;
+  --ink50:   #1a1d26;
+  --ink80:   #12151c;
+  --paper:   #f5f0e8;
+  --paper-d: #e8e3da;
+  --green:   #00c896;
+  --red:     #f03e3e;
+  --gold:    #f5c518;
+  --mute:    #8892a4;
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 14px; }
+
+body {
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'DM Sans', sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+  /* Subtle grain overlay */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.022'/%3E%3C/svg%3E");
+}
+
+/* Scrollbar — thin terminal-style */
+::-webkit-scrollbar        { width: 3px; height: 3px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: #2e3345; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #3e4560; }
+
+/* Selection */
+::selection { background: #00c89640; color: var(--paper); }
+
+/* Chart container */
+.tv-chart { border-radius: 8px; overflow: hidden; }
+
+/* Animations */
+@keyframes flash-green  { 0%,100% { color: var(--paper); } 50% { color: var(--green); } }
+@keyframes flash-red    { 0%,100% { color: var(--paper); } 50% { color: var(--red);   } }
+.flash-up   { animation: flash-green 0.6s ease; }
+.flash-down { animation: flash-red   0.6s ease; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.fade-up { animation: fadeUp 0.3s ease forwards; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { animation: spin 0.75s linear infinite; }
+
+@keyframes pulse-border {
+  0%, 100% { border-color: rgba(0,200,150,0.2); }
+  50%       { border-color: rgba(0,200,150,0.5); }
+}
+.pulse-green { animation: pulse-border 2s ease infinite; }
+
+/* Typography helpers */
+.font-display { font-family: 'Space Mono', monospace; }
+.font-body    { font-family: 'DM Sans', sans-serif; }
+
+/* Number displays — tabular */
+.num { font-family: 'Space Mono', monospace; font-variant-numeric: tabular-nums; }
+
+/* Card base */
+.card {
+  background: var(--ink50);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+}
+
+/* Positive / negative colour utilities */
+.text-pos { color: var(--green); }
+.text-neg { color: var(--red);   }
+.text-neu { color: var(--mute);  }
+
+/* Focus rings */
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid rgba(0,200,150,0.4);
+  outline-offset: 2px;
+}
+
+/* Prevent number input spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+input[type=number] { -moz-appearance: textfield; }
+
+/* Glow accents on active elements */
+.glow-green { box-shadow: 0 0 12px rgba(0,200,150,0.15); }
+.glow-red   { box-shadow: 0 0 12px rgba(240,62,62,0.15); }
