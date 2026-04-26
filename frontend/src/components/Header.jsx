@@ -1,12 +1,17 @@
 import React from 'react'
-import { BarChart2, RefreshCw, Zap } from 'lucide-react'
-import { resetSim } from '../utils/api'
+import { RefreshCw, Zap, LogOut, User } from 'lucide-react'
+import { resetSim, logout } from '../utils/api'
 
-export default function Header({ equity, cash, onReset }) {
+export default function Header({ equity, cash, onReset, user, onLogout }) {
   const handleReset = async () => {
     if (!confirm('Reset simulation to ₹10,000? All trades will be cleared.')) return
     await resetSim()
     onReset()
+  }
+
+  const handleLogout = async () => {
+    await logout()
+    onLogout()
   }
 
   return (
@@ -39,13 +44,29 @@ export default function Header({ equity, cash, onReset }) {
             ₹{equity != null ? equity.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '—'}
           </p>
         </div>
-        <button
-          onClick={handleReset}
-          title="Reset simulation"
-          className="ml-2 flex items-center gap-1.5 text-xs px-3 py-1.5 rounded bg-[#1a1d26] hover:bg-[#22263340] text-[#8892a4] hover:text-[#f03e3e] border border-white/5 transition-colors"
-        >
+
+        <div className="w-px h-8 bg-white/10" />
+
+        {/* User info */}
+        {user && (
+          <div className="flex items-center gap-1.5 text-[11px] text-[#8892a4]">
+            <User size={12} />
+            <span className="font-display max-w-[140px] truncate">{user.email}</span>
+          </div>
+        )}
+
+        <button onClick={handleReset} title="Reset simulation"
+          className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded bg-[#1a1d26] hover:bg-[#22263340]
+            text-[#8892a4] hover:text-[#f03e3e] border border-white/5 transition-colors">
           <RefreshCw size={12} />
           <span>Reset</span>
+        </button>
+
+        <button onClick={handleLogout} title="Sign out"
+          className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded bg-[#1a1d26] hover:bg-[#22263340]
+            text-[#8892a4] hover:text-[#f03e3e] border border-white/5 transition-colors">
+          <LogOut size={12} />
+          <span>Logout</span>
         </button>
       </div>
     </header>
