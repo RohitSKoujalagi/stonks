@@ -9,11 +9,16 @@ function validateSymbol(symbol) {
   return null
 }
 
-function validateQty(qty, action, price, cash, position) {
+function validateQty(qty, action, price, cash, position, exchange) {
   const n = parseFloat(qty)
   if (!qty || isNaN(n))   return 'Enter a valid quantity.'
   if (n <= 0)              return 'Quantity must be greater than zero.'
   if (!Number.isFinite(n)) return 'Quantity is out of range.'
+
+  // Add this validation
+  if ((exchange === 'NSE' || exchange === 'BSE') && !Number.isInteger(n)) {
+    return 'Fractional units are not allowed for NSE and BSE.'
+  }
   if (action === 'buy' && price) {
     const cost = n * price * 1.0005
     if (cash != null && cost > cash)
@@ -62,8 +67,8 @@ export default function OrderPanel({ symbol, exchange, cash, holdings, onOrderPl
 
   useEffect(() => {
     if (!touched) return
-    setQtyErr(validateQty(qty, action, price, cash, currentPosition))
-  }, [qty, action, price, cash, currentPosition, touched])
+    setQtyErr(validateQty(qty, action, price, cash, currentPosition, exchange))
+  }, [qty, action, price, cash, currentPosition, touched, exchange])
 
   const slipMul = slippage ? (action === 'buy' ? 1.0005 : 0.9995) : 1
   const estimatedCost = price && qty && !isNaN(parseFloat(qty))
@@ -73,7 +78,7 @@ export default function OrderPanel({ symbol, exchange, cash, holdings, onOrderPl
     setTouched(true)
     const symErr = validateSymbol(symbol)
     if (symErr) { toast.error(symErr); return }
-    const qErr = validateQty(qty, action, price, cash, currentPosition)
+    const qErr = validateQty(qty, action, price, cash, currentPosition, exchange)
     if (qErr) { toast.error(qErr); setQtyErr(qErr); return }
     if (!price) { toast.error('Cannot place order — price unavailable.'); return }
     setSubmitting(true)
@@ -88,7 +93,7 @@ export default function OrderPanel({ symbol, exchange, cash, holdings, onOrderPl
       setSubmitting(false)
     }
   }
-
+ 
   const refreshPrice = () => {
     if (!symbol) return
     setPriceLoading(true); setPriceErr(null)

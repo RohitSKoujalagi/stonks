@@ -477,6 +477,10 @@ def place_order(order: OrderRequest, session_token: Optional[str] = Cookie(defau
         raise HTTPException(status_code=400, detail="action must be 'buy' or 'sell'")
     if order.qty <= 0:
         raise HTTPException(status_code=400, detail="qty must be positive")
+        
+    # Add this validation for fractional shares on NSE and BSE
+    if order.exchange.upper() in ["NSE", "BSE"] and not float(order.qty).is_integer():
+        raise HTTPException(status_code=400, detail="Fractional units are not allowed for NSE and BSE")
 
     market_price = fetch_current_price(order.symbol, order.exchange)
     slip         = SLIPPAGE if order.use_slippage else 0
